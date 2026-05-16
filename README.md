@@ -5,6 +5,11 @@ This is a magick system for manifesting intent into the world.
 **Commands:**
 
 - `magick cast <string>`: this is essentially "I will do this specific action right now". It could be "do laundry" or "take a shower" or whatever. We cast the intention that it will happen, and it happens.
+  - **Chaining multiple intents:** separate them with `;` (quote the whole string so your shell doesn't split it as commands):
+    ```
+    magick cast "do laundry; order food; meditate for 5 minutes"
+    ```
+    Today this is logged as a single line; splitting them into separate log entries is a planned enhancement, but the convention is forward-compatible.
 - `magick history`
 
 Running `magick` with no arguments prints the lines above (derived from registered subcommands; commands that take a trailing phrase list as `magick <name> <string>` via `_COMMANDS_WITH_TEXT_TAIL` in [`magick/cli.py`](magick/cli.py)).
