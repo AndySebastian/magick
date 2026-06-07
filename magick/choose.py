@@ -3,19 +3,31 @@ import os
 import random
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 
-_TODOIST_TASKS_URL = "https://api.todoist.com/rest/v2/tasks"
+_TODOIST_TASKS_URL = "https://api.todoist.com/api/v1/tasks"
+_PAGE_LIMIT = 200
 
 
 def _fetch_open_tasks(token: str) -> list[str]:
-    req = urllib.request.Request(
-        _TODOIST_TASKS_URL,
-        headers={"Authorization": f"Bearer {token}"},
-    )
-    with urllib.request.urlopen(req) as resp:
-        payload = json.load(resp)
-    return [task["content"] for task in payload]
+    contents: list[str] = []
+    headers = {"Authorization": f"Bearer {token}"}
+    cursor = None
+    while True:
+        params = {"limit": _PAGE_LIMIT}
+        if cursor:
+            params["cursor"] = cursor
+        req = urllib.request.Request(
+            f"{_TODOIST_TASKS_URL}?{urllib.parse.urlencode(params)}",
+            headers=headers,
+        )
+        with urllib.request.urlopen(req) as resp:
+            payload = json.load(resp)
+        contents.extend(task["content"] for task in payload["results"])
+        cursor = payload.get("next_cursor")
+        if not cursor:
+            return contents
 
 
 def perform_choose(n: int) -> None:
