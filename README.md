@@ -2,6 +2,8 @@ This is a magick system for manifesting intent into the world.
 
 See also: [magick-pwa](https://github.com/AndySebastian/magick-pwa) — the same ritual as an installable web app for your phone.
 
+For the concept behind magick and how the two repos relate, see [`docs/overview.md`](docs/overview.md).
+
 **Log file:** `~/.magick/logofcasts` (append-only; one line per cast with UTC timestamp)
 
 **Commands:**
