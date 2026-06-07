@@ -2,9 +2,13 @@ import typer
 from typer.main import get_command
 
 from magick.cast import perform_cast, print_cast_history
+from magick.choose import perform_choose
 
-# Subcommands that take a free-text tail after the command name (see _format_lines).
-_COMMANDS_WITH_TEXT_TAIL = frozenset({"cast"})
+# Subcommands that take a trailing argument after the command name (see _format_lines).
+_COMMAND_TAIL_HINTS = {
+    "cast": "<string>",
+    "choose": "<N>",
+}
 
 app = typer.Typer(help="Ritual CLI for intentional action.")
 
@@ -15,7 +19,8 @@ def _format_lines() -> list[str]:
         return []
     lines = []
     for name in sorted(group.commands):
-        suffix = " <string>" if name in _COMMANDS_WITH_TEXT_TAIL else ""
+        hint = _COMMAND_TAIL_HINTS.get(name)
+        suffix = f" {hint}" if hint else ""
         lines.append(f"magick {name}{suffix}")
     return lines
 
@@ -47,6 +52,14 @@ def cast(
 def history() -> None:
     """Print the log of past casts."""
     print_cast_history()
+
+
+@app.command()
+def choose(
+    n: int = typer.Argument(..., help="Number of open Todoist tasks to randomly select."),
+) -> None:
+    """Pick N random open Todoist tasks to break decision paralysis."""
+    perform_choose(n)
 
 
 def main() -> None:
