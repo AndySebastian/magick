@@ -3,11 +3,13 @@ from typer.main import get_command
 
 from magick.cast import perform_cast, print_cast_history
 from magick.choose import perform_choose
+from magick.promise import perform_promise, print_promise_history
 
 # Subcommands that take a trailing argument after the command name (see _format_lines).
 _COMMAND_TAIL_HINTS = {
     "cast": "<string>",
     "choose": "<N>",
+    "promise": "<string> --at <when>",
 }
 
 app = typer.Typer(help="Ritual CLI for intentional action.")
@@ -52,6 +54,28 @@ def cast(
 def history() -> None:
     """Print the log of past casts."""
     print_cast_history()
+
+
+@app.command()
+def promise(
+    commitment: list[str] = typer.Argument(
+        ...,
+        help="What you vow to do, to be kept at a future time.",
+    ),
+    at: str = typer.Option(
+        ...,
+        "--at",
+        help="When the promise comes due, e.g. 2026-07-01T15:00 (local time).",
+    ),
+) -> None:
+    """Make a promise: a commitment to be kept at a future time."""
+    perform_promise(" ".join(commitment), at)
+
+
+@app.command()
+def promises() -> None:
+    """Print the log of promises made."""
+    print_promise_history()
 
 
 @app.command()
